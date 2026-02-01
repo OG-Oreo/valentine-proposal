@@ -51,7 +51,17 @@ body {
 @keyframes fall { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(100vh) rotate(360deg); } }
 
 /* No button */
-#no { position:absolute; cursor:pointer; border:none; border-radius:10px; padding:10px 20px; color:white; font-weight:bold; background:#ff4d6d; }
+#no {
+  position: fixed;          /* fix positioning so it moves anywhere */
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  color: white;
+  font-weight: bold;
+  background: #ff4d6d;
+  z-index: 9999;            /* always on top */
+}
 </style>
 </head>
 <body>
@@ -88,12 +98,22 @@ setInterval(()=>{
 /* Extra tricky No button */
 function moveNo() {
   const noBtn = document.getElementById("no");
-  const x = Math.random() * (window.innerWidth - 120);
-  const y = Math.random() * (window.innerHeight - 60);
+  let x, y;
+  do {
+    x = Math.random() * (window.innerWidth - 120);
+    y = Math.random() * (window.innerHeight - 60);
+    // Avoid center area where Heart button is (roughly center)
+  } while (
+    x > window.innerWidth/2 - 50 && x < window.innerWidth/2 + 50 &&
+    y > window.innerHeight/2 - 50 && y < window.innerHeight/2 + 50
+  );
+
   noBtn.style.left = x + "px";
   noBtn.style.top = y + "px";
+
   const angle = Math.random() * 360;
   noBtn.style.transform = `rotate(${angle}deg)`;
+
   const colors = ["#ff4d6d", "#ffb347", "#ff69b4", "#ff6f61", "#ff7f50"];
   noBtn.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
   noBtn.style.transition = "all 0.2s ease";
@@ -104,7 +124,7 @@ function sayYes() {
   document.body.innerHTML = `<div style="text-align:center;color:white;"><h1>Yaaay! 💘🎉</h1><p>Happy Valentine’s Day, Parina ❤️</p></div>`;
 }
 
-/* Confetti on heart button */
+/* Confetti on heart button click */
 document.querySelector(".heart-btn").addEventListener("click",()=>{
   for(let i=0;i<100;i++){
     const confetti=document.createElement("div");
